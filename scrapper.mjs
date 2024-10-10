@@ -14,7 +14,7 @@ try {
     waitUntil: "networkidle", // Esperar hasta que se haya cargado la mayoría de los recursos
   });
 
-  // Realizar scroll hasta el final de la página
+  //Realizar scroll hasta el final de la página
   await autoScroll(page);
 
   // Esperar 15 segundos para asegurarse de que todo el contenido dinámico se haya cargado
