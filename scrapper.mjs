@@ -3,6 +3,9 @@
 import { chromium } from "playwright";
 import fs from "fs";
 
+// Arreglo de URLs a las que quieres hacer scraping
+const urls = ["https://www.superxtra.com/supermercado/bebidas-y-jugos?page=1"];
+
 const browser = await chromium.launch({
   headless: false, // Cambiar a false para ver el proceso en la ventana del navegador
 });
@@ -10,37 +13,67 @@ const browser = await chromium.launch({
 const page = await browser.newPage();
 
 try {
-  await page.goto("https://www.smrey.com/search?name=jugo", {
-    waitUntil: "networkidle", // Esperar hasta que se haya cargado la mayoría de los recursos
-  });
+  // Array para almacenar todas las URLs de imágenes de cada página
+  let allProducts = [];
 
-  //Realizar scroll hasta el final de la página
-  await autoScroll(page);
+  // Iterar sobre cada URL
+  for (const url of urls) {
+    console.log(`Visitando: ${url}`);
 
-  // Esperar 15 segundos para asegurarse de que todo el contenido dinámico se haya cargado
-  await page.waitForTimeout(15000);
+    await page.goto(url, {
+      waitUntil: "networkidle", // Esperar hasta que se haya cargado la mayoría de los recursos
+    });
 
-  // Esperar explícitamente a que las imágenes de los productos se carguen en la página
-  await page.waitForSelector(".card-product-vertical figure img");
+    // Realizar scroll hasta el final de la página
+    await autoScroll(page);
 
-  // Ahora proceder con la extracción de los productos
-  const products = await page.$$eval(
-    ".card-product-vertical figure",
-    (results) =>
-      results.map((el) => {
-        const image = el.querySelector("img")?.getAttribute("src");
-        return { image };
-      })
-  );
+    // Esperar 10 segundos para asegurarse de que todo el contenido dinámico se haya cargado
+    await page.waitForTimeout(10000);
 
-  // Extraer las URLs de las imágenes y guardarlas en un archivo .txt
-  const imageUrls = products
-    .map((product) => product.image)
-    .filter(Boolean)
-    .join("\n");
-  fs.writeFileSync("image_urls.txt", imageUrls);
+    // Esperar explícitamente a que las imágenes de los productos se carguen en la página
+    await page.waitForSelector(".vtex-search-result-3-x-gallery section img");
 
-  console.log("URLs de imágenes guardadas en image_urls.txt");
+    // Ahora proceder con la extracción de los productos
+    const products = await page.$$eval(
+      ".vtex-product-summary-2-x-container",
+      (results) =>
+        results.map((el, index) => {
+          // Inicializar el objeto de producto con el ID
+          const product = {
+            id: index + 1, // Agregar un id basado en el índice del mapeo (empezando desde 1)
+          };
+
+          // Extraer el atributo href del enlace; Concatenar con la URL base si existe el enlace
+          const relativeUrl = el.querySelector("a")?.getAttribute("href");
+          product.link = relativeUrl
+            ? `https://www.superxtra.com${relativeUrl}`
+            : null;
+
+          // Extraer el contenido del span del nombre del producto
+          const productName = el
+            .querySelector(
+              ".vtex-product-summary-2-x-productBrand.vtex-product-summary-2-x-brandName"
+            )
+            ?.textContent?.trim();
+          product.name = productName;
+
+          return product;
+        })
+    );
+
+    // Filtrar productos válidos (que tengan al menos un campo válido) y agregar a la lista general
+    const validProducts = products.filter(
+      (product) => product.link && product.name
+    );
+
+    allProducts.push(...validProducts);
+  }
+
+  // Guardar todos los productos en un archivo JSON sin eliminar duplicados
+  const jsonContent = JSON.stringify({ products: allProducts }, null, 2); // Formatear el JSON con indentación
+  fs.writeFileSync("products.json", jsonContent);
+
+  console.log("Datos de productos guardados en products.json");
 } finally {
   await browser.close();
 }
