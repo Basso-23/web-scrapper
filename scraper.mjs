@@ -1,4 +1,4 @@
-// PARA EJECUTAR USAR COMANDO: node scrapper.mjs
+// PARA EJECUTAR USAR COMANDO: node scraper.mjs
 
 import { chromium } from "playwright";
 import fs from "fs";
@@ -10,17 +10,16 @@ const browser = await chromium.launch({
 
 const page = await browser.newPage();
 
-// ------------------- URLS ------------------- //
-const urls = [
-  "https://www.superxtra.com/supermercado/bebidas-y-jugos?page=1",
-  "https://www.superxtra.com/supermercado/bebidas-y-jugos?page=2",
-  "https://www.superxtra.com/supermercado/bebidas-y-jugos?page=3",
-  "https://www.superxtra.com/supermercado/bebidas-y-jugos?page=4",
-];
+// ------------------- LEER URLS DESDE EL ARCHIVO TXT ------------------- //
+const urls = fs
+  .readFileSync("urls.txt", "utf-8")
+  .split("\n")
+  .map((url) => url.trim())
+  .filter((url) => url.length > 0);
 
 try {
   let allData = [];
-  let idCounter = 1; // Contador global de IDs
+  let idCounter = 1;
 
   for (const url of urls) {
     console.log(`Visitando: ${url}`);
@@ -31,11 +30,11 @@ try {
     await page.waitForTimeout(7000);
 
     // ------------------- WAIT FOR THIS CLASS TO RENDER ------------------- //
-    await page.waitForSelector(".vtex-search-result-3-x-gallery section img");
+    await page.waitForSelector(".flex.flex-grow-1.w-100.flex-column");
 
     const data = await page.$$eval(
       // ------------------- PARENT CLASS OF DATA TO BE SCRAPED ------------------- //
-      ".vtex-product-summary-2-x-container",
+      ".flex.flex-grow-1.w-100.flex-column",
       (results, idCounter) =>
         results.map((el) => {
           // ------------------- ID ------------------- //
@@ -43,10 +42,27 @@ try {
 
           // ------------------- NAME ------------------- //
           const productName = el
+            .querySelector(".vtex-store-components-3-x-productBrand")
+            ?.textContent?.trim();
+
+          // ------------------- PRICE ------------------- //
+          const productPrice = el
             .querySelector(
-              ".vtex-product-summary-2-x-productBrand.vtex-product-summary-2-x-brandName"
+              ".superxtrapanama-home-categories-0-x-custom-product-selling-price"
             )
             ?.textContent?.trim();
+
+          // ------------------- BARCODE ------------------- //
+          const productBarcode = el
+            .querySelector(
+              ".vtex-product-identifier-0-x-product-identifier__value"
+            )
+            ?.textContent?.trim();
+
+          // ------------------- IMAGE ------------------- //
+          const productImage = el
+            .querySelector(".vtex-store-components-3-x-productImage img")
+            .getAttribute("src");
 
           // ------------------- LINK ------------------- //
           const productLink =
@@ -58,16 +74,19 @@ try {
           // ------------------- JSON ELEMENTS ------------------- //
           const json = {
             id: num,
+            barcode: productBarcode,
             name: productName,
-            link: productLink,
+            list_price: productPrice,
+            taxes_id: "EXENTO",
+            standard_price: "0.00",
+            image_url: productImage,
           };
 
           return json;
         }),
-      idCounter // Pasar el contador actual como argumento a la función de evaluación
+      idCounter
     );
 
-    // Actualizar el contador global para el siguiente lote
     idCounter += data.length;
 
     allData.push(...data);
