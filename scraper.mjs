@@ -21,8 +21,8 @@ try {
   let allData = [];
   let idCounter = 1;
 
-  for (const url of urls) {
-    console.log(`Visitando: ${url}`);
+  for (const [index, url] of urls.entries()) {
+    console.log(`(${index + 1}/${urls.length}): ${url}`);
     await page.goto(url, {
       waitUntil: "networkidle",
     });
@@ -76,10 +76,16 @@ try {
             id: num,
             barcode: productBarcode,
             name: productName,
-            list_price: productPrice,
+            list_price: productPrice
+              ? productPrice
+                  .match(/[\d,.]+/)[0]
+                  .replace(",", "")
+                  .trim()
+              : "0.00",
             taxes_id: "EXENTO",
             standard_price: "0.00",
             image_url: productImage,
+            pos_categ_id: "Congelados",
           };
 
           return json;

@@ -2,21 +2,23 @@
   "data": [
     {
       "id": 1,
-      "barcode": "4504399400",
-      "name": "Pack De 6 Unidades De Soda Cocacola 600 ML",
-      "list_price": "$ 4.74",
+      "barcode": "7452000201667",
+      "name": "Nuggets Regular Muslo Toledano 340 gr",
+      "list_price": "2.79",
       "taxes_id": "EXENTO",
       "standard_price": "0.00",
-      "image_url": "https://superxtrapanama.vtexassets.com/arquivos/ids/189436-800-auto?v=638507112319470000&width=800&height=auto&aspect=true"
+      "image_url": "https://superxtrapanama.vtexassets.com/arquivos/ids/158309-800-auto?v=637806395111300000&width=800&height=auto&aspect=true",
+      "pos_categ_id": "Congelados"
     },
     {
       "id": 2,
-      "barcode": "7445072006551",
-      "name": "Jugo Cifrut Naranja Mandarina Limon 3030 Ml",
-      "list_price": "$ 1.76",
+      "barcode": "8711786256483",
+      "name": "Papas Cong Chefs Best 2 5 Kg",
+      "list_price": "5.49",
       "taxes_id": "EXENTO",
       "standard_price": "0.00",
-      "image_url": "https://superxtrapanama.vtexassets.com/arquivos/ids/191377-800-auto?v=638550589268830000&width=800&height=auto&aspect=true"
+      "image_url": "https://superxtrapanama.vtexassets.com/arquivos/ids/191442-800-auto?v=638551093696600000&width=800&height=auto&aspect=true",
+      "pos_categ_id": "Congelados"
     }
   ]
 }
