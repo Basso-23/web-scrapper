@@ -1,4 +1,4 @@
-// PARA EJECUTAR USAR COMANDO: node scraper.mjs
+// PARA EJECUTAR USAR COMANDO: node scraper-product.mjs
 
 import { chromium } from "playwright";
 import fs from "fs";
@@ -23,9 +23,7 @@ try {
 
   for (const [index, url] of urls.entries()) {
     console.log(`(${index + 1}/${urls.length}): ${url}`);
-    await page.goto(url, {
-      waitUntil: "networkidle",
-    });
+    await page.goto(url);
     await autoScroll(page);
     await page.waitForTimeout(7000);
 

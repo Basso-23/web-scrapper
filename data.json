@@ -2,23 +2,11 @@
   "data": [
     {
       "id": 1,
-      "barcode": "7452000201667",
-      "name": "Nuggets Regular Muslo Toledano 340 gr",
-      "list_price": "2.79",
-      "taxes_id": "EXENTO",
-      "standard_price": "0.00",
-      "image_url": "https://superxtrapanama.vtexassets.com/arquivos/ids/158309-800-auto?v=637806395111300000&width=800&height=auto&aspect=true",
-      "pos_categ_id": "Congelados"
+      "link": "https://www.superxtra.com/leche-uht-estrella-azul-946-ml-entera-88209970164/p"
     },
     {
       "id": 2,
-      "barcode": "8711786256483",
-      "name": "Papas Cong Chefs Best 2 5 Kg",
-      "list_price": "5.49",
-      "taxes_id": "EXENTO",
-      "standard_price": "0.00",
-      "image_url": "https://superxtrapanama.vtexassets.com/arquivos/ids/191442-800-auto?v=638551093696600000&width=800&height=auto&aspect=true",
-      "pos_categ_id": "Congelados"
+      "link": "https://www.superxtra.com/queso-amarillo-cremoso-por-libra/p"
     }
   ]
 }
