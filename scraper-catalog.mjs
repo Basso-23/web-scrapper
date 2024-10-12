@@ -23,7 +23,21 @@ try {
 
   for (const [index, url] of urls.entries()) {
     console.log(`(${index + 1}/${urls.length}): ${url}`);
-    await page.goto(url);
+
+    // Intentar acceder a la URL hasta que funcione correctamente
+    let success = false;
+    while (!success) {
+      try {
+        // Intentar acceder a la URL
+        await page.goto(url, { timeout: 30000 });
+        success = true; // Si no hay error, marcar como exitoso
+      } catch (error) {
+        console.error(`Error al acceder a ${url}: ${error.message}`);
+        console.log(`Reintentando acceder a: ${url}`);
+        await page.waitForTimeout(5000); // Esperar 5 segundos antes de volver a intentar
+      }
+    }
+
     await autoScroll(page);
     await page.waitForTimeout(7000);
 
@@ -39,7 +53,6 @@ try {
           const num = idCounter++;
 
           // ------------------- LINK ------------------- //
-
           const productLink = `https://www.superxtra.com${el
             .querySelector("a")
             .getAttribute("href")}`;

@@ -10,6 +10,6 @@ with open('data.json', 'r', encoding='utf-8') as file:
 df = pd.DataFrame(data["data"])
 
 # Guardar el DataFrame en un archivo .xlsx
-df.to_excel('output.xlsx', index=False)
+df.to_excel('output-cafe.xlsx', index=False)
 
 print("El archivo 'output.xlsx' ha sido creado con éxito.")
